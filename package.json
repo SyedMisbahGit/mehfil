@@ -14,7 +14,6 @@
     "framer-motion": "^12.20.2",
     "lucide-react": "^0.510.0",
     "react": "19.0.0",
-    "react-canvas-draw": "^1.2.1",
     "react-dom": "19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-router-dom": "^7.6.3",
