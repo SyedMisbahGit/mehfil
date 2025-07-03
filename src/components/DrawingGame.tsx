@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { Check, Copy, Download, Pencil, Share2, Trash2 } from 'lucide-react';
-import CanvasDraw from 'react-canvas-draw';
+import { Check, Copy, Pencil, Share2, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { v4 as uuidv4 } from '../utils/mockUuid';
 
@@ -24,7 +23,7 @@ interface Game {
 }
 
 export const DrawingGame = () => {
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
   const [games, setGames] = useState<Game[]>([]);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -74,7 +73,7 @@ export const DrawingGame = () => {
   };
   
   const handleSaveDrawing = () => {
-    if (!user || !canvasRef.current || !answer.trim()) {
+    if (!userProfile || !canvasRef.current || !answer.trim()) {
       toast.error('Please provide an answer for your drawing');
       return;
     }
@@ -82,13 +81,13 @@ export const DrawingGame = () => {
     const drawingData = canvasRef.current.getSaveData();
     const newGame: Game = {
       id: uuidv4(),
-      creatorId: user.id,
-      creatorName: user.name,
+      creatorId: userProfile.id,
+      creatorName: userProfile.preferredName,
       drawingData,
       answer: answer.trim().toLowerCase(),
       guesses: [],
-      timestamp: Date.now(),
-      completed: false
+      completed: false,
+      timestamp: Date.now()
     };
     
     const updatedGames = [newGame, ...games];
@@ -130,7 +129,7 @@ export const DrawingGame = () => {
   };
   
   const handleSubmitGuess = () => {
-    if (!user || !activeGame || !guess.trim()) {
+    if (!userProfile || !activeGame || !guess.trim()) {
       toast.error('Please enter your guess');
       return;
     }
@@ -138,20 +137,20 @@ export const DrawingGame = () => {
     const isCorrect = guess.trim().toLowerCase() === activeGame.answer.toLowerCase();
     
     const newGuess = {
-      userId: user.id,
-      userName: user.name,
+      userId: userProfile.id,
+      userName: userProfile.preferredName,
       guess: guess.trim(),
       correct: isCorrect,
       timestamp: Date.now()
     };
     
     // Check if user already guessed
-    const userAlreadyGuessed = activeGame.guesses.some(g => g.userId === user.id);
+    const userAlreadyGuessed = activeGame.guesses.some(g => g.userId === userProfile.id);
     
     let updatedGuesses;
     if (userAlreadyGuessed) {
       updatedGuesses = activeGame.guesses.map(g => 
-        g.userId === user.id ? newGuess : g
+        g.userId === userProfile.id ? newGuess : g
       );
     } else {
       updatedGuesses = [...activeGame.guesses, newGuess];
@@ -263,7 +262,7 @@ export const DrawingGame = () => {
                         onClick={() => setActiveGame(game)}
                         className="text-xs px-2 py-1 text-amber-600 hover:text-amber-800 border border-amber-200 rounded-md hover:bg-amber-50"
                       >
-                        {game.creatorId === user?.id ? 'Dekho' : 'Guess Karo'}
+                        {game.creatorId === userProfile?.id ? 'Dekho' : 'Guess Karo'}
                       </button>
                     </div>
                   </div>
@@ -327,15 +326,12 @@ export const DrawingGame = () => {
             </div>
             
             <div className="border border-gray-200 rounded-md overflow-hidden mb-3">
-              <CanvasDraw
+              <canvas
                 ref={canvasRef}
-                brushColor={brushColor}
-                brushRadius={brushRadius}
-                lazyRadius={0}
-                canvasWidth="100%"
-                canvasHeight={300}
-                hideGrid
-                className="bg-white"
+                width={400}
+                height={300}
+                className="border border-gray-300 rounded-md bg-white"
+                style={{ cursor: 'crosshair' }}
               />
             </div>
             
@@ -421,7 +417,7 @@ export const DrawingGame = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-md p-4">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-medium text-gray-800">
-                {activeGame.creatorId === user?.id ? 'Aapka Drawing' : 'Guess Karo'}
+                {activeGame.creatorId === userProfile?.id ? 'Aapka Drawing' : 'Guess Karo'}
               </h2>
               <div className="flex gap-2">
                 <button
@@ -434,13 +430,12 @@ export const DrawingGame = () => {
             </div>
             
             <div className="border border-gray-200 rounded-md overflow-hidden mb-3">
-              <CanvasDraw
-                disabled
-                hideGrid
-                canvasWidth="100%"
-                canvasHeight={300}
-                saveData={activeGame.drawingData}
-                className="bg-white"
+              <canvas
+                ref={canvasRef}
+                width={400}
+                height={300}
+                className="border border-gray-300 rounded-md bg-white"
+                style={{ cursor: 'crosshair' }}
               />
             </div>
             
@@ -462,7 +457,7 @@ export const DrawingGame = () => {
             )}
             
             {/* Show answer only to creator or if the game is completed */}
-            {(activeGame.creatorId === user?.id || activeGame.completed) && (
+            {(activeGame.creatorId === userProfile?.id || activeGame.completed) && (
               <div className="p-3 bg-gradient-to-r from-amber-100 to-rose-100 rounded-md mb-3">
                 <p className="text-gray-800 font-medium">
                   Answer: <span className="text-rose-600">{activeGame.answer}</span>
@@ -471,7 +466,7 @@ export const DrawingGame = () => {
             )}
             
             {/* Allow guessing only for non-creators and if game is not completed */}
-            {activeGame.creatorId !== user?.id && !activeGame.completed && (
+            {activeGame.creatorId !== userProfile?.id && !activeGame.completed && (
               <div className="mb-4">
                 <div className="flex gap-2">
                   <input

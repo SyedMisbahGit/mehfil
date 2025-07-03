@@ -52,7 +52,7 @@ type GameState = {
 };
 
 export const LudoGame = () => {
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
   const { activeUsers } = useHeartbeat();
   
   const [gameState, setGameState] = useState<GameState>({
@@ -77,7 +77,7 @@ export const LudoGame = () => {
     // For this demo, we'll just simulate online players
     const playerNames = ['Arif', 'Zainab', 'Imran', 'Sana'];
     
-    if (user) {
+    if (userProfile) {
       // Assign this user to the first player
       setLocalPlayerIndex(0);
       
@@ -86,11 +86,11 @@ export const LudoGame = () => {
         ...prev,
         players: prev.players.map((player, index) => ({
           ...player,
-          name: index === 0 ? user.name : playerNames[index]
+          name: index === 0 ? userProfile.preferredName : playerNames[index]
         }))
       }));
     }
-  }, [user]);
+  }, [userProfile]);
   
   const rollDice = () => {
     if (gameState.diceRolling || gameState.winner) return;
@@ -250,7 +250,7 @@ export const LudoGame = () => {
   const resetGame = () => {
     setGameState({
       players: [
-        { color: 'red', pieces: [-1, -1, -1, -1], name: user?.name || 'Player 1' },
+        { color: 'red', pieces: [-1, -1, -1, -1], name: userProfile?.preferredName || 'Player 1' },
         { color: 'green', pieces: [-1, -1, -1, -1], name: 'Player 2' },
         { color: 'yellow', pieces: [-1, -1, -1, -1], name: 'Player 3' },
         { color: 'blue', pieces: [-1, -1, -1, -1], name: 'Player 4' }

@@ -7,11 +7,11 @@ import { useHeartbeat } from '../context/HeartbeatContext';
 import { useAuth } from '../context/AuthContext';
 import { useAI } from '../context/AIContext';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Dice3, LogOut, MessageCircle, MessageSquare, Pencil, Search, Shield } from 'lucide-react';
+import { ArrowUpRight, Dice3, LogOut, MessageCircle, MessageSquare, Pencil, Shield } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 export const Home = () => {
-  const { user, logout } = useAuth();
+  const { userProfile } = useAuth();
   const { qissas, activeQissa } = useQissa();
   const { tehqeeqs } = useTehqeeq();
   const { currentPrompt } = usePrompt();
@@ -73,7 +73,7 @@ export const Home = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">Mehfil</h1>
           <div className="flex items-center gap-2">
-            {user?.id === 'owner' && (
+            {userProfile?.id === 'owner' && (
               <Link
                 to="/admin"
                 className="text-gray-500 hover:text-gray-700 p-1"
@@ -83,7 +83,7 @@ export const Home = () => {
               </Link>
             )}
             <button 
-              onClick={logout}
+              onClick={() => {}}
               className="text-gray-500 hover:text-gray-700 p-1"
               title="Log Out"
             >
@@ -91,7 +91,7 @@ export const Home = () => {
             </button>
           </div>
         </div>
-        <p className="text-gray-500">{greeting}, {user?.name}</p>
+        <p className="text-gray-500">{greeting}, {userProfile?.preferredName}</p>
         <div className="mt-1 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full inline-block">
           Sirf cousins ke liye
         </div>

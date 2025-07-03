@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import ErrorBoundary from './ErrorBoundary';
 
 export const QissaGoi = () => {
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
   const { 
     qissas, 
     activeQissa, 
@@ -332,7 +332,7 @@ export const QissaGoi = () => {
               </div>
             )}
 
-            {participants.includes(user?.id || '') && (
+            {participants.includes(userProfile?.id || '') && (
               <form onSubmit={handleSubmitLine} className="relative">
                 {currentPrompt && (
                   <div className="absolute -top-8 right-0 flex items-center">
@@ -375,7 +375,7 @@ export const QissaGoi = () => {
                   </button>
                 </div>
                 
-                {!isMyTurn && participants.includes(user?.id || '') && (
+                {!isMyTurn && participants.includes(userProfile?.id || '') && (
                   <p className="text-xs text-gray-500 mt-2 text-center">
                     Intezaar kijiye... aapki baari jald hi aayegi
                   </p>

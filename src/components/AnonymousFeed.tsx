@@ -15,7 +15,7 @@ type FeedMessage = {
 };
 
 export const AnonymousFeed = () => {
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
   const [messages, setMessages] = useState<FeedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);

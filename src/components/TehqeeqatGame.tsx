@@ -4,7 +4,7 @@ import MysteryClueCard from './MysteryClueCard';
 import GuessInput from './GuessInput';
 
 const TehqeeqatGame: React.FC = () => {
-  const { currentClue, guesses, setNextClue, submitGuess } = useTehqeeqat();
+  const { currentClue, setNextClue, submitGuess } = useTehqeeqat();
   const [feedback, setFeedback] = useState('');
   const [correct, setCorrect] = useState(false);
 

@@ -90,7 +90,7 @@ const getTodaysMood = () => {
   return localStorage.getItem('mehfil-todaysMood') || '';
 };
 
-const pickWhisper = (mood: string, slot: any) => {
+const pickWhisper = (mood: string) => {
   if (mood && WHISPERS[mood]) {
     const arr = WHISPERS[mood];
     return arr[Math.floor(Math.random() * arr.length)];
@@ -149,7 +149,7 @@ export const WhisperProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // Pick mood
     const mood = getTodaysMood();
     // Pick whisper
-    const msg = pickWhisper(mood, slot);
+    const msg = pickWhisper(mood);
     // Show toast/modal (for now, alert)
     window.alert(`${slot.vibe}\n${msg}`);
   };

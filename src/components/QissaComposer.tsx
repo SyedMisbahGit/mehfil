@@ -5,7 +5,7 @@ import { qissaPrompts } from '../data/qissaPrompts';
 
 const QissaComposer: React.FC = () => {
   const { active, participants, lines, addLine } = useQissa();
-  const { cousinId, userProfile } = useAuth();
+  const { cousinId } = useAuth();
   const [input, setInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
