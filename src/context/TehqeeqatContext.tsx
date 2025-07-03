@@ -71,8 +71,11 @@ export const TehqeeqatProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // Try to get names for each id
     const profiles = ids.map((id: string) => {
       try {
-        const profile = JSON.parse(localStorage.getItem('mehfil-userProfile'));
-        if (profile && profile.id === id) return profile;
+        const rawProfile = localStorage.getItem('mehfil-userProfile');
+        if (rawProfile) {
+          const profile = JSON.parse(rawProfile);
+          if (profile && profile.id === id) return profile;
+        }
       } catch {}
       return { id, preferredName: id };
     });
