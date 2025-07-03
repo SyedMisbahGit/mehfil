@@ -6,6 +6,7 @@ interface AuthContextType {
   userProfile: CousinProfile | null;
   setUserProfile: (profile: CousinProfile) => void;
   logout: () => void;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,8 +41,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('mehfil-userProfile');
   };
 
+  // Check if user is admin (Misbah)
+  const isAdmin = userProfile?.preferredName === "Misbah";
+
   return (
-    <AuthContext.Provider value={{ cousinId, userProfile, setUserProfile, logout }}>
+    <AuthContext.Provider value={{ cousinId, userProfile, setUserProfile, logout, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

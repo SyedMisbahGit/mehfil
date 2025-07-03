@@ -9,13 +9,22 @@ export const SplashScreen = () => {
   useEffect(() => {
     // Get user profile from localStorage
     const profile = localStorage.getItem('mehfil-userProfile');
-    if (profile) {
-      try {
-        const userProfile = JSON.parse(profile);
-        setUserName(userProfile.preferredName || '');
-      } catch (error) {
-        console.error('Error parsing user profile:', error);
+    if (!profile) {
+      navigate("/onboarding");
+      return;
+    }
+    
+    try {
+      const userProfile = JSON.parse(profile);
+      if (!userProfile.onboardingComplete) {
+        navigate("/onboarding");
+        return;
       }
+      setUserName(userProfile.preferredName || '');
+    } catch (error) {
+      console.error('Error parsing user profile:', error);
+      navigate("/onboarding");
+      return;
     }
 
     // Navigate to home after 2.5 seconds

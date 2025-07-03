@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { HeartCrack, MessageCircle, SendHorizontal, Sparkles } from 'lucide-react';
+import { MessageCircle, SendHorizontal, Sparkles, HeartCrack } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 type FeedMessage = {
   id: string;
   text: string;
   timestamp: number;
+  authorId: string;
   reactions: {
     heart: number;
     fire: number;
@@ -18,61 +19,36 @@ export const AnonymousFeed = () => {
   const [messages, setMessages] = useState<FeedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+  const { userProfile } = useAuth();
+
   useEffect(() => {
-    // Load messages from localStorage
-    const storedMessages = localStorage.getItem('mehfil-feed-messages');
-    if (storedMessages) {
-      setMessages(JSON.parse(storedMessages));
-    } else {
-      // Initialize with sample data
-      const initialMessages: FeedMessage[] = [
-        {
-          id: 'msg-1',
-          text: 'Kisi ne suna hai vo purani kahani jo dadi amma sunati thi?',
-          timestamp: Date.now() - 3600000 * 5,
-          reactions: { heart: 2, fire: 0, laugh: 1 }
-        },
-        {
-          id: 'msg-2',
-          text: 'Aaj mausam kitna acha hai, bilkul barsat wala feel ho raha hai',
-          timestamp: Date.now() - 3600000 * 3,
-          reactions: { heart: 1, fire: 2, laugh: 0 }
-        },
-        {
-          id: 'msg-3',
-          text: 'Cousins ki mehfil sajti hi alag hai, maza aa jata hai jab hum sab milte hain',
-          timestamp: Date.now() - 3600000,
-          reactions: { heart: 3, fire: 1, laugh: 2 }
-        }
-      ];
-      setMessages(initialMessages);
-      localStorage.setItem('mehfil-feed-messages', JSON.stringify(initialMessages));
+    // Load existing messages
+    const stored = localStorage.getItem('mehfil-feed-messages');
+    if (stored) {
+      try {
+        setMessages(JSON.parse(stored));
+      } catch (error) {
+        console.error('Error loading messages:', error);
+      }
     }
-    
-    // Set up mock real-time updates
+
+    // Simulate new messages from other users
     const interval = setInterval(() => {
-      // Simulate receiving a new message every 3-5 minutes
-      const shouldAddMessage = Math.random() < 0.05; // 5% chance every check
+      const randomMessages = [
+        "Aaj ka din kaisa jaa raha hai?",
+        "Koi khaas baat share karni hai?",
+        "Mehfil mein sab theek hai?",
+        "Koi sawal hai to puch sakte hain",
+        "Dil ki baat share karein"
+      ];
       
-      if (shouldAddMessage) {
-        const randomMessages = [
-          'Aaj mein ne ek naya gaana suna, kitna achha tha!',
-          'Koi bata sakta hai holiday homework ka kya scene hai?',
-          'Mere paas kuch mashwara hai, koi sun raha hai?',
-          'Kya ajeeb baat hai, abhi tak koi online nahi aaya',
-          'Agle weekend kya plan hai cousins?',
-          'Mujhe lag raha hai hume ek trip plan karni chahiye',
-          'Kisi ne woh new movie dekhi hai?',
-          'Main bore ho raha hoon, koi interesting baat batao',
-          'Yaad hai jab hum sab milke cricket khelte the?',
-          'Abhi kaun online hai? Hello?'
-        ];
-        
+      const shouldAddMessage = Math.random() < 0.1; // 10% chance
+      if (shouldAddMessage && messages.length < 20) {
         const newMsg: FeedMessage = {
-          id: `msg-${Date.now()}`,
+          id: `msg-${Date.now()}-${Math.random()}`,
           text: randomMessages[Math.floor(Math.random() * randomMessages.length)],
           timestamp: Date.now(),
+          authorId: 'anonymous',
           reactions: { heart: 0, fire: 0, laugh: 0 }
         };
         
@@ -105,6 +81,7 @@ export const AnonymousFeed = () => {
       id: `msg-${Date.now()}`,
       text: newMessage.trim(),
       timestamp: Date.now(),
+      authorId: userProfile?.id || 'anonymous',
       reactions: { heart: 0, fire: 0, laugh: 0 }
     };
     
@@ -135,6 +112,16 @@ export const AnonymousFeed = () => {
       localStorage.setItem('mehfil-feed-messages', JSON.stringify(updated));
       return updated;
     });
+  };
+
+  const deletePost = (messageId: string) => {
+    if (window.confirm('Kya aap is post ko delete karna chahte hain?')) {
+      setMessages(prev => {
+        const updated = prev.filter(msg => msg.id !== messageId);
+        localStorage.setItem('mehfil-feed-messages', JSON.stringify(updated));
+        return updated;
+      });
+    }
   };
   
   const formatTime = (timestamp: number) => {
@@ -199,40 +186,54 @@ export const AnonymousFeed = () => {
               </motion.div>
             )}
             
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mb-3 p-3 bg-white rounded-lg shadow-sm border border-gray-100"
-              >
-                <p className="text-gray-800 mb-2">{message.text}</p>
-                <div className="flex justify-between items-center">
-                  <div className="flex space-x-2">
-                    <button 
-                      onClick={() => handleReaction(message.id, 'heart')}
-                      className="flex items-center text-xs text-gray-500 hover:text-rose-500"
-                    >
-                      ❤️ {message.reactions.heart}
-                    </button>
-                    <button 
-                      onClick={() => handleReaction(message.id, 'fire')}
-                      className="flex items-center text-xs text-gray-500 hover:text-amber-500"
-                    >
-                      🔥 {message.reactions.fire}
-                    </button>
-                    <button 
-                      onClick={() => handleReaction(message.id, 'laugh')}
-                      className="flex items-center text-xs text-gray-500 hover:text-green-500"
-                    >
-                      😂 {message.reactions.laugh}
-                    </button>
+            {messages.map((message) => {
+              const isOwner = message.authorId === userProfile?.id;
+              return (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mb-3 p-3 bg-white rounded-lg shadow-sm border border-gray-100"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="text-gray-800 flex-1">{message.text}</p>
+                    {isOwner && (
+                      <button 
+                        onClick={() => deletePost(message.id)}
+                        className="text-accent hover:text-red-500 ml-2 text-sm"
+                        title="Delete post"
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
-                  <p className="text-xs text-gray-400">{formatTime(message.timestamp)}</p>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex justify-between items-center">
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => handleReaction(message.id, 'heart')}
+                        className="flex items-center text-xs text-gray-500 hover:text-rose-500"
+                      >
+                        ❤️ {message.reactions.heart}
+                      </button>
+                      <button 
+                        onClick={() => handleReaction(message.id, 'fire')}
+                        className="flex items-center text-xs text-gray-500 hover:text-amber-500"
+                      >
+                        🔥 {message.reactions.fire}
+                      </button>
+                      <button 
+                        onClick={() => handleReaction(message.id, 'laugh')}
+                        className="flex items-center text-xs text-gray-500 hover:text-green-500"
+                      >
+                        😂 {message.reactions.laugh}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-400">{formatTime(message.timestamp)}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
           <div ref={messagesEndRef} />
         </div>

@@ -20,6 +20,15 @@ button {
   @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-accent;
 }
 
+/* Fix white text in inputs */
+input, textarea, select {
+  @apply text-text placeholder:text-text/60 bg-soft/50 border border-primary/20;
+}
+
+input:focus, textarea:focus, select:focus {
+  @apply outline-none ring-2 ring-accent;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
