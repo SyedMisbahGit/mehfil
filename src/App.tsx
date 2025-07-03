@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { MoodProvider } from './context/MoodContext';
 import { DiaryProvider } from './context/DiaryContext';
 import { WhisperProvider } from './context/WhisperContext';
+import { QissaProvider } from './context/QissaContext';
 import { Toaster } from 'react-hot-toast';
 
 import HomePage from './pages/HomePage';
@@ -34,33 +35,35 @@ const App: React.FC = () => {
         <MoodProvider>
           <DiaryProvider>
             <WhisperProvider>
-              <Router>
-                <React.Suspense fallback={<div>Loading...</div>}>
-                  <Routes>
-                    <Route path="/onboarding" element={<Onboarding />} />
-                    <Route path="/welcome" element={<SplashScreen />} />
-                    <Route
-                      path="/"
-                      element={<Navigate to={hasProfile ? "/home" : "/onboarding"} replace />} />
-                    <Route
-                      path="*"
-                      element={
-                        <RequireProfile>
-                          <Routes>
-                            <Route path="/home" element={<HomePage />} />
-                            <Route path="/qissa" element={<QissaPage />} />
-                            <Route path="/tehqeeqat" element={<TehqeeqatPage />} />
-                            <Route path="/gupshup" element={<AnonymousFeedPage />} />
-                            <Route path="/games" element={<GamesPage />} />
-                            <Route path="/admin" element={<AdminDashboardPage />} />
-                            <Route path="*" element={<Navigate to="/home" replace />} />
-                          </Routes>
-                        </RequireProfile>
-                      }
-                    />
-                  </Routes>
-                </React.Suspense>
-              </Router>
+              <QissaProvider>
+                <Router>
+                  <React.Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+                      <Route path="/onboarding" element={<Onboarding />} />
+                      <Route path="/welcome" element={<SplashScreen />} />
+                      <Route
+                        path="/"
+                        element={<Navigate to={hasProfile ? "/home" : "/onboarding"} replace />} />
+                      <Route
+                        path="*"
+                        element={
+                          <RequireProfile>
+                            <Routes>
+                              <Route path="/home" element={<HomePage />} />
+                              <Route path="/qissa" element={<QissaPage />} />
+                              <Route path="/tehqeeqat" element={<TehqeeqatPage />} />
+                              <Route path="/gupshup" element={<AnonymousFeedPage />} />
+                              <Route path="/games" element={<GamesPage />} />
+                              <Route path="/admin" element={<AdminDashboardPage />} />
+                              <Route path="*" element={<Navigate to="/home" replace />} />
+                            </Routes>
+                          </RequireProfile>
+                        }
+                      />
+                    </Routes>
+                  </React.Suspense>
+                </Router>
+              </QissaProvider>
             </WhisperProvider>
           </DiaryProvider>
         </MoodProvider>
