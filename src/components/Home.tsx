@@ -27,6 +27,18 @@ export const Home = () => {
   const todaysWhisper = getTodaysWhisper();
   
   useEffect(() => {
+    // Update last active timestamp for analytics
+    if (userProfile?.id) {
+      let lastActive: Record<string, number> = {};
+      try {
+        lastActive = JSON.parse(localStorage.getItem('mehfil-lastActive') || '{}');
+      } catch {}
+      lastActive[userProfile.id] = Date.now();
+      localStorage.setItem('mehfil-lastActive', JSON.stringify(lastActive));
+    }
+  }, [userProfile?.id]);
+  
+  useEffect(() => {
     try {
       // Update heartbeat when component mounts
       updatePresence();

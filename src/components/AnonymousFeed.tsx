@@ -146,16 +146,6 @@ export const AnonymousFeed = () => {
     });
   };
 
-  const deletePost = (messageId: string) => {
-    if (window.confirm('Kya aap is post ko delete karna chahte hain?')) {
-      setMessages(prev => {
-        const updated = prev.filter(msg => msg.id !== messageId);
-        saveMessages(updated);
-        return updated;
-      });
-    }
-  };
-
   const editPost = (messageId: string) => {
     const message = messages.find(msg => msg.id === messageId);
     if (!message) return;

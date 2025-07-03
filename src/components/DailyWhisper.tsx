@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDiary } from '../context/DiaryContext';
+
+const getTodayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+};
 
 const DailyWhisper: React.FC = () => {
   const { addDiaryEntry, hasEntryForToday } = useDiary();
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  // Reset whispersToday if date has changed
+  useEffect(() => {
+    const today = getTodayKey();
+    const data = localStorage.getItem('mehfil-whispersToday');
+    if (data) {
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.date !== today) {
+          localStorage.setItem('mehfil-whispersToday', JSON.stringify({ date: today, count: 0 }));
+        }
+      } catch {
+        localStorage.setItem('mehfil-whispersToday', JSON.stringify({ date: today, count: 0 }));
+      }
+    } else {
+      localStorage.setItem('mehfil-whispersToday', JSON.stringify({ date: today, count: 0 }));
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,6 +35,17 @@ const DailyWhisper: React.FC = () => {
     addDiaryEntry(text.trim());
     setText('');
     setSubmitted(true);
+    // Increment whispersToday
+    const today = getTodayKey();
+    let data = { date: today, count: 0 };
+    try {
+      data = JSON.parse(localStorage.getItem('mehfil-whispersToday') || '') || data;
+    } catch {}
+    if (data.date !== today) {
+      data = { date: today, count: 0 };
+    }
+    data.count += 1;
+    localStorage.setItem('mehfil-whispersToday', JSON.stringify(data));
   };
 
   if (hasEntryForToday || submitted) {

@@ -24,6 +24,46 @@ const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  // Mini-Usage Analytics
+  const getUniqueCousins = () => {
+    try {
+      const cousins = JSON.parse(localStorage.getItem('mehfil-cousins') || '[]');
+      return Array.isArray(cousins) ? cousins.length : 0;
+    } catch {
+      return 0;
+    }
+  };
+  const getActiveToday = () => {
+    try {
+      const lastActive = JSON.parse(localStorage.getItem('mehfil-lastActive') || '{}');
+      const today = new Date();
+      let count = 0;
+      Object.values(lastActive).forEach((ts: any) => {
+        const d = new Date(ts);
+        if (
+          d.getFullYear() === today.getFullYear() &&
+          d.getMonth() === today.getMonth() &&
+          d.getDate() === today.getDate()
+        ) {
+          count++;
+        }
+      });
+      return count;
+    } catch {
+      return 0;
+    }
+  };
+  const getWhispersToday = () => {
+    try {
+      const data = JSON.parse(localStorage.getItem('mehfil-whispersToday') || '{}');
+      const today = new Date();
+      if (data.date === `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`) return data.count;
+      return 0;
+    } catch {
+      return 0;
+    }
+  };
+
   const handleClear = () => {
     if (window.confirm('Wipe all local data and start over?')) {
       localStorage.clear();
@@ -35,6 +75,34 @@ const AdminDashboardPage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-surface p-4">
       <div className="card w-full max-w-md">
         <h1 className="text-2xl font-display text-accent mb-6 text-center">Admin Dashboard</h1>
+
+        {/* Feedback Button */}
+        <div className="flex justify-center mb-4">
+          <a
+            href={`https://wa.me/919120159093?text=Mehfil%20feedback%3A%20${encodeURIComponent(userProfile?.preferredName || '')}%20(${encodeURIComponent(userProfile?.id || '')})%20-%20`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-primary rounded-lg font-medium shadow hover:bg-primary hover:text-accent transition-all"
+          >
+            💌 Send Feedback
+          </a>
+        </div>
+        
+        {/* Mini-Usage Analytics */}
+        <div className="mb-6 grid grid-cols-3 gap-3 text-center">
+          <div className="bg-soft/50 rounded-lg p-3">
+            <div className="text-lg font-bold text-accent">{getUniqueCousins()}</div>
+            <div className="text-xs text-text/70">Unique Cousins</div>
+          </div>
+          <div className="bg-soft/50 rounded-lg p-3">
+            <div className="text-lg font-bold text-accent">{getActiveToday()}</div>
+            <div className="text-xs text-text/70">Active Today</div>
+          </div>
+          <div className="bg-soft/50 rounded-lg p-3">
+            <div className="text-lg font-bold text-accent">{getWhispersToday()}</div>
+            <div className="text-xs text-text/70">Whispers Today</div>
+          </div>
+        </div>
         
         <div className="mb-6 p-4 bg-soft/50 rounded-lg shadow flex flex-col items-center">
           <div className="text-xs text-text/60 mb-1">Cousin ID</div>

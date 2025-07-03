@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { MoodProvider } from './context/MoodContext';
 import { DiaryProvider } from './context/DiaryContext';
 import { WhisperProvider } from './context/WhisperContext';
@@ -24,56 +24,9 @@ function RequireProfile({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function RequireAdmin({ children }: { children: React.ReactNode }) {
-  const { isAdmin } = useAuth();
-  if (!isAdmin) {
-    return <Navigate to="/home" replace />;
-  }
-  return <>{children}</>;
-}
-
-const AppRoutes: React.FC = () => {
+const App: React.FC = () => {
   const hasProfile = !!localStorage.getItem('mehfil-userProfile');
   
-  return (
-    <Router>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/welcome" element={<SplashScreen />} />
-          <Route
-            path="/"
-            element={<Navigate to={hasProfile ? "/home" : "/onboarding"} replace />} />
-          <Route
-            path="*"
-            element={
-              <RequireProfile>
-                <Routes>
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="/qissa" element={<QissaPage />} />
-                  <Route path="/tehqeeqat" element={<TehqeeqatPage />} />
-                  <Route path="/gupshup" element={<AnonymousFeedPage />} />
-                  <Route path="/games" element={<GamesPage />} />
-                  <Route 
-                    path="/admin" 
-                    element={
-                      <RequireAdmin>
-                        <AdminDashboardPage />
-                      </RequireAdmin>
-                    } 
-                  />
-                  <Route path="*" element={<Navigate to="/home" replace />} />
-                </Routes>
-              </RequireProfile>
-            }
-          />
-        </Routes>
-      </React.Suspense>
-    </Router>
-  );
-};
-
-const App: React.FC = () => {
   return (
     <>
       <Toaster />
@@ -81,7 +34,33 @@ const App: React.FC = () => {
         <MoodProvider>
           <DiaryProvider>
             <WhisperProvider>
-              <AppRoutes />
+              <Router>
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <Routes>
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/welcome" element={<SplashScreen />} />
+                    <Route
+                      path="/"
+                      element={<Navigate to={hasProfile ? "/home" : "/onboarding"} replace />} />
+                    <Route
+                      path="*"
+                      element={
+                        <RequireProfile>
+                          <Routes>
+                            <Route path="/home" element={<HomePage />} />
+                            <Route path="/qissa" element={<QissaPage />} />
+                            <Route path="/tehqeeqat" element={<TehqeeqatPage />} />
+                            <Route path="/gupshup" element={<AnonymousFeedPage />} />
+                            <Route path="/games" element={<GamesPage />} />
+                            <Route path="/admin" element={<AdminDashboardPage />} />
+                            <Route path="*" element={<Navigate to="/home" replace />} />
+                          </Routes>
+                        </RequireProfile>
+                      }
+                    />
+                  </Routes>
+                </React.Suspense>
+              </Router>
             </WhisperProvider>
           </DiaryProvider>
         </MoodProvider>

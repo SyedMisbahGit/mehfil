@@ -92,6 +92,16 @@ export const Onboarding = () => {
       // Save to localStorage
       localStorage.setItem("mehfil-userProfile", JSON.stringify(newProfile));
       
+      // Add cousin ID to mehfil-cousins array
+      let cousins = [];
+      try {
+        cousins = JSON.parse(localStorage.getItem('mehfil-cousins') || '[]');
+      } catch {}
+      if (!cousins.includes(newProfile.id)) {
+        cousins.push(newProfile.id);
+        localStorage.setItem('mehfil-cousins', JSON.stringify(cousins));
+      }
+      
       // Set to context
       setUserProfile(newProfile);
       
