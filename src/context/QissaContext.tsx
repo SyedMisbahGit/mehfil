@@ -307,13 +307,18 @@ export const QissaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const startRound = (p: string[]) => {
+    // Auto-fallback: if no participants, use current user for solo demo
+    let participantsList = p;
+    if ((!p || p.length === 0) && userProfile) {
+      participantsList = [userProfile.id];
+    }
     setActive(true);
-    setParticipants(p);
+    setParticipants(participantsList);
     setLines([]);
     setRoundStart(Date.now());
     localStorage.setItem(
       'mehfil-qissaActive',
-      JSON.stringify({ active: true, participants: p, lines: [], roundStart: Date.now() })
+      JSON.stringify({ active: true, participants: participantsList, lines: [], roundStart: Date.now() })
     );
   };
 

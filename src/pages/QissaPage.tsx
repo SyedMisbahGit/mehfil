@@ -34,15 +34,25 @@ const QissaPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       {!active ? (
-        <button
-          className="bg-green-600 text-white px-6 py-3 rounded-lg shadow font-bold text-lg mt-8"
-          onClick={handleStart}
-          disabled={active}
-        >
-          🌱 Start Qissa Goi
-        </button>
+        <>
+          <div className="bg-yellow-100 p-4 rounded-xl text-gray-800 mb-4 text-center text-sm max-w-md">
+            Mehfil mein milkar ek qissa likhte hain. Har cousin ek line likhega — jab uski baari ho. Shuru karne ke liye neeche button dabao. 💭
+          </div>
+          <button
+            className="bg-accent bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition mb-4"
+            onClick={handleStart}
+            disabled={active}
+          >
+            ✨ Qissa Shuru Karein
+          </button>
+        </>
       ) : (
-        <QissaComposer />
+        <>
+          <div className="text-xs text-gray-500 mb-2 text-center">
+            Qissa chal raha hai – har cousin apni baari pe ek line likhega.
+          </div>
+          <QissaComposer />
+        </>
       )}
       <QissaParchment
         open={showParchment}

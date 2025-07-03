@@ -5,9 +5,10 @@ interface GuessInputProps {
   disabled: boolean;
   feedback: string;
   correct: boolean;
+  label?: string;
 }
 
-const GuessInput: React.FC<GuessInputProps> = ({ onGuess, disabled, feedback, correct }) => {
+const GuessInput: React.FC<GuessInputProps> = ({ onGuess, disabled, feedback, correct, label }) => {
   const [input, setInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -19,6 +20,7 @@ const GuessInput: React.FC<GuessInputProps> = ({ onGuess, disabled, feedback, co
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      {label && <label className="text-sm text-muted mb-1">{label}</label>}
       <input
         type="text"
         className="border rounded p-2"

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { mysteryClues } from '../data/mysteryClues';
+import { useAuth } from './AuthContext';
 
 export interface MysteryClue {
   id: string;
@@ -12,6 +13,9 @@ export interface TehqeeqatContextType {
   guesses: string[];
   setNextClue: () => void;
   submitGuess: (idGuess: string) => void;
+  hasGuessedToday: boolean;
+  targetName: string;
+  isSoloMode: boolean;
 }
 
 const TehqeeqatContext = createContext<TehqeeqatContextType | undefined>(undefined);
@@ -32,8 +36,11 @@ function loadState() {
 }
 
 export const TehqeeqatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { userProfile } = useAuth();
   const [currentClue, setCurrentClue] = useState<MysteryClue | null>(null);
   const [guesses, setGuesses] = useState<string[]>([]);
+  const [targetName, setTargetName] = useState('');
+  const [isSoloMode, setIsSoloMode] = useState(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -42,6 +49,8 @@ export const TehqeeqatProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (state && state[todayKey]) {
       setCurrentClue(state[todayKey].currentClue);
       setGuesses(state[todayKey].guesses || []);
+      setTargetName(state[todayKey].targetName || '');
+      setIsSoloMode(!!state[todayKey].isSoloMode);
     }
   }, []);
 
@@ -49,19 +58,47 @@ export const TehqeeqatProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const todayKey = getTodayKey();
     const state = loadState() || {};
-    state[todayKey] = { currentClue, guesses };
+    state[todayKey] = { currentClue, guesses, targetName, isSoloMode };
     localStorage.setItem('mehfil-tehqeeqat', JSON.stringify(state));
-  }, [currentClue, guesses]);
+  }, [currentClue, guesses, targetName, isSoloMode]);
 
-  // Pick a random cousin ID from inviteTokens
-  function getRandomCousinId() {
-    return crypto.randomUUID();
+  // Helper: get all cousin IDs and names
+  function getAllCousins() {
+    let ids = [];
+    try {
+      ids = JSON.parse(localStorage.getItem('mehfil-cousins') || '[]');
+    } catch {}
+    // Try to get names for each id
+    const profiles = ids.map((id: string) => {
+      try {
+        const profile = JSON.parse(localStorage.getItem('mehfil-userProfile'));
+        if (profile && profile.id === id) return profile;
+      } catch {}
+      return { id, preferredName: id };
+    });
+    return profiles;
+  }
+
+  // Pick a random cousin (not self if possible)
+  function pickTargetCousin() {
+    const all = getAllCousins();
+    if (!userProfile || all.length <= 1) {
+      setIsSoloMode(true);
+      setTargetName((userProfile && userProfile.preferredName) ? userProfile.preferredName : 'Aap');
+      return userProfile && typeof userProfile.id === 'string' ? userProfile.id : '';
+    }
+    setIsSoloMode(false);
+    // Pick random cousin (not self)
+    const others = all.filter((c: { id: string }) => c.id !== userProfile?.id);
+    const target = others[Math.floor(Math.random() * others.length)];
+    setTargetName(target?.preferredName || 'Cousin');
+    return target?.id || '';
   }
 
   // Pick a random clue and assign a cousin
   const setNextClue = () => {
     const clue = mysteryClues[Math.floor(Math.random() * mysteryClues.length)];
-    const targetId = getRandomCousinId();
+    const targetId = pickTargetCousin();
     setCurrentClue({ id: clue.id, clueText: clue.template, targetId });
     setGuesses([]);
   };
@@ -69,12 +106,14 @@ export const TehqeeqatProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Submit a guess
   const submitGuess = (idGuess: string) => {
     if (!currentClue) return;
+    if (guesses.length >= 1) return; // Only one guess per day
     setGuesses(prev => [...prev, idGuess]);
-    // No further logic here; UI will check if guess is correct
   };
 
+  const hasGuessedToday = guesses.length > 0;
+
   return (
-    <TehqeeqatContext.Provider value={{ currentClue, guesses, setNextClue, submitGuess }}>
+    <TehqeeqatContext.Provider value={{ currentClue, guesses, setNextClue, submitGuess, hasGuessedToday, targetName, isSoloMode }}>
       {children}
     </TehqeeqatContext.Provider>
   );
