@@ -6,6 +6,7 @@ import { usePrompt } from '../context/PromptContext';
 import { useHeartbeat } from '../context/HeartbeatContext';
 import { useAuth } from '../context/AuthContext';
 import { useAI } from '../context/AIContext';
+import { useWhisper } from '../context/WhisperContext';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Dice3, LogOut, MessageCircle, MessageSquare, Pencil, Shield } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -17,9 +18,13 @@ export const Home = () => {
   const { currentPrompt } = usePrompt();
   const { updatePresence, activeUsers } = useHeartbeat();
   const { getPersonalizedRecommendation, trackFeatureUsage } = useAI();
+  const { getTodaysWhisper } = useWhisper();
 
   // Get personalized recommendation
   const recommendedFeature = getPersonalizedRecommendation();
+  
+  // Get today's whisper
+  const todaysWhisper = getTodaysWhisper();
   
   useEffect(() => {
     try {
@@ -96,6 +101,26 @@ export const Home = () => {
           Sirf cousins ke liye
         </div>
       </motion.div>
+
+      {/* Today's Whisper Card */}
+      {todaysWhisper && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg shadow-sm p-4 mb-6 border border-primary/20"
+        >
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-primary/20 rounded-full mt-1">
+              <MessageSquare size={16} className="text-primary" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-gray-800 mb-1">{todaysWhisper.vibe}</h3>
+              <p className="text-gray-700 italic">"{todaysWhisper.text}"</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <div className="bg-gradient-to-r from-amber-50 to-rose-50 rounded-lg shadow-sm p-4 mb-6 border border-amber-100">
         <div className="flex items-center justify-between">

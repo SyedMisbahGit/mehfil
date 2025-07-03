@@ -27,13 +27,17 @@ export const SplashScreen = () => {
       return;
     }
 
-    // Navigate to home after 2.5 seconds
+    // Navigate to home after 7 seconds
     const timer = setTimeout(() => {
       navigate('/home');
-    }, 2500);
+    }, 7000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
+
+  const handleProceed = () => {
+    navigate('/home');
+  };
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -65,8 +69,18 @@ export const SplashScreen = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
         >
-          <p className="text-sm">ek kavita, ek parivaar</p>
+          <p className="text-sm">makhdoompur pariwaar</p>
         </motion.div>
+        
+        <motion.button
+          onClick={handleProceed}
+          className="mt-8 bg-primary text-white px-8 py-3 rounded-lg hover:bg-accent transition-all font-medium text-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
+        >
+          Bismillah, shurū karein
+        </motion.button>
       </motion.div>
     </div>
   );

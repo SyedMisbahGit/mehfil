@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useRef } from 'react';
 interface WhisperContextType {
   triggerWhisper: (slotKey?: string) => void;
   resetWhispersToday: () => void;
+  getTodaysWhisper: () => { text: string; vibe: string } | null;
 }
 
 const WhisperContext = createContext<WhisperContextType | undefined>(undefined);
@@ -100,6 +101,29 @@ const pickWhisper = (mood: string) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
 
+const getTodaysWhisper = (): { text: string; vibe: string } | null => {
+  const stored = localStorage.getItem('mehfil-todaysWhisper');
+  if (!stored) return null;
+  
+  try {
+    const data = JSON.parse(stored);
+    const today = getTodayKey();
+    if (data.date === today) {
+      return { text: data.text, vibe: data.vibe };
+    }
+  } catch (error) {
+    console.error('Error parsing today\'s whisper:', error);
+  }
+  
+  return null;
+};
+
+const setTodaysWhisper = (text: string, vibe: string) => {
+  const today = getTodayKey();
+  const data = { date: today, text, vibe };
+  localStorage.setItem('mehfil-todaysWhisper', JSON.stringify(data));
+};
+
 // --- Provider ---
 export const WhisperProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Use number[] for browser setTimeout
@@ -150,6 +174,8 @@ export const WhisperProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const mood = getTodaysMood();
     // Pick whisper
     const msg = pickWhisper(mood);
+    // Store today's whisper
+    setTodaysWhisper(msg, slot.vibe);
     // Show toast/modal (for now, alert)
     window.alert(`${slot.vibe}\n${msg}`);
   };
@@ -157,6 +183,7 @@ export const WhisperProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const value: WhisperContextType = {
     triggerWhisper,
     resetWhispersToday,
+    getTodaysWhisper,
   };
 
   return (

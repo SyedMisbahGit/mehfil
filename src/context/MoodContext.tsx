@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MoodEntry } from '../types/types';
+import { toast } from 'react-hot-toast';
 
 interface MoodContextType {
   moodLog: MoodEntry[];
@@ -23,6 +24,21 @@ function getTodayDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
+const suggestionFor = (mood: MoodEntry['mood']): string => {
+  switch (mood) {
+    case 'light':
+      return "Qur'an se ek ayat parh lo.";
+    case 'nostalgic':
+      return "Purani tasveer dekh kar dua karo.";
+    case 'tired':
+      return "5-min walk lo, fresh hawa.";
+    case 'cheerful':
+      return "Kisi ko chhoti khushi share karo.";
+    default:
+      return "Allah aapko khush rakhe.";
+  }
+};
+
 export const MoodProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [moodLog, setMoodLog] = useState<MoodEntry[]>([]);
   const [totalMoodEntries, setTotalMoodEntries] = useState(getTotalMoodEntries());
@@ -45,6 +61,18 @@ export const MoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newTotal = totalMoodEntries + 1;
     setTotalMoodEntries(newTotal);
     localStorage.setItem(MOOD_ENTRIES_KEY, newTotal.toString());
+    
+    // Show suggestion toast
+    toast(suggestionFor(mood), {
+      duration: 4000,
+      position: 'top-center',
+      style: {
+        background: '#0f5132',
+        color: '#f1f5f9',
+        borderRadius: '8px',
+        fontSize: '14px',
+      },
+    });
   };
 
   const setTodayMood = (_mood: string) => {
