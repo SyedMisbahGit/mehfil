@@ -3,10 +3,9 @@
 export interface CousinProfile {
   id: string;
   preferredName: string;
-  elderCall: string;
-  youngerCall: string;
-  gender?: string;
-  fatherBranch: string;
+  age: number;
+  gender: string;
+  onboardingComplete?: boolean;
 }
 
 export interface Whisper {

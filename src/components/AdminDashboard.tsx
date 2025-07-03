@@ -197,29 +197,29 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-surface">
       <div className="max-w-7xl mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate('/')}
-              className="p-2 rounded-full hover:bg-gray-100"
+              className="p-2 rounded-full hover:bg-soft/50 text-text"
             >
-              <ArrowLeft size={20} className="text-gray-600" />
+              <ArrowLeft size={20} />
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-            <p className="text-xs text-gray-500 ml-4">Build Phase: 2 / 3</p>
+            <h1 className="text-2xl font-display text-accent">Admin Dashboard</h1>
+            <p className="text-xs text-text/60 ml-4">Build Phase: 2 / 3</p>
           </div>
           
           <div className="flex items-center gap-2">
             <button
               onClick={refreshData}
               disabled={isRefreshing}
-              className={`p-2 rounded-full ${isRefreshing ? 'text-blue-400' : 'text-blue-600 hover:bg-blue-50'}`}
+              className={`p-2 rounded-full ${isRefreshing ? 'text-accent/50' : 'text-accent hover:bg-soft/50'}`}
             >
               <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : ''} />
             </button>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-text/60">
               Last updated: {new Date().toLocaleTimeString()}
             </div>
           </div>
@@ -732,7 +732,7 @@ const AdminDashboard = () => {
           </div>
         </div>
         <button
-          className="mt-4 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition"
+          className="mt-4 px-4 py-2 rounded-lg bg-primary text-white hover:bg-accent transition-all"
           onClick={() => {
             if (window.confirm("This will wipe all Mehfil data on this device. Continue?")) {
               localStorage.clear();

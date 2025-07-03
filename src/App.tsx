@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage';
 import TehqeeqatPage from './pages/TehqeeqatPage';
 import AnonymousFeedPage from './pages/AnonymousFeedPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import SplashScreen from './components/SplashScreen';
 
 const QissaPage = React.lazy(() => import('./pages/QissaPage'));
 const GamesPage = React.lazy(() => import('./pages/GamesPage'));
@@ -25,6 +26,7 @@ function RequireProfile({ children }: { children: React.ReactNode }) {
 
 const App: React.FC = () => {
   const hasProfile = !!localStorage.getItem('mehfil-userProfile');
+  
   return (
     <>
       <Toaster />
@@ -36,6 +38,7 @@ const App: React.FC = () => {
                 <React.Suspense fallback={<div>Loading...</div>}>
                   <Routes>
                     <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/welcome" element={<SplashScreen />} />
                     <Route
                       path="/"
                       element={<Navigate to={hasProfile ? "/home" : "/onboarding"} replace />} />

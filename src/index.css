@@ -3,13 +3,21 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Baloo 2', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  @apply bg-amber-50 text-gray-800 min-h-screen;
+  @apply bg-surface text-text font-sans;
+}
+
+.card {
+  @apply bg-soft/70 p-4 rounded-xl shadow backdrop-blur;
+}
+
+button {
+  @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-accent;
 }
 
 /* Custom scrollbar */
@@ -19,22 +27,22 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(15, 81, 50, 0.1);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(214, 184, 119, 0.3);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(214, 184, 119, 0.5);
 }
 
 /* Text selection color */
 ::selection {
-  @apply bg-amber-200 text-amber-900;
+  @apply bg-accent/20 text-accent;
 }
 
 /* Line clamp utilities */
