@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+
 import { HeartCrack, MessageCircle, SendHorizontal, Sparkles } from 'lucide-react';
 
 type FeedMessage = {
@@ -15,7 +15,6 @@ type FeedMessage = {
 };
 
 export const AnonymousFeed = () => {
-  const { userProfile } = useAuth();
   const [messages, setMessages] = useState<FeedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);

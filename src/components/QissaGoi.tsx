@@ -405,7 +405,7 @@ export const QissaGoi = () => {
               >
                 <h4 className="font-medium text-gray-800 mb-2">{qissa.title}</h4>
                 <div className="pl-3 border-l-2 border-amber-200 text-gray-700">
-                  {qissa.lines.map((line, index) => (
+                  {qissa.lines.map((line) => (
                     <p key={line.id} className="mb-1">
                       {line.text}
                     </p>

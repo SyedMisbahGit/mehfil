@@ -47,7 +47,7 @@ export const MoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(MOOD_ENTRIES_KEY, newTotal.toString());
   };
 
-  const setTodayMood = (mood: string) => {
+  const setTodayMood = (_mood: string) => {
     // ... existing logic to set today's mood ...
     // Increment mood entries
     const newTotal = totalMoodEntries + 1;

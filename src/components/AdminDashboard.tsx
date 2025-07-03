@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, BarChart3, Clock, Database, Lock, RefreshCw, Server, Settings, Shield, Users, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -39,7 +39,7 @@ const formatDate = (timestamp: number) => {
 };
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { userProfile } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [systemMetrics, setSystemMetrics] = useState<SystemMetric[]>([]);
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
 
   // Mood entries (stub: count of 'mehfil-todaysMood' in localStorage history, or 0 if not tracked)
   // For now, just show 0 or add logic if you have mood history
-  const moodEntries = 0;
+
 
   // Diary entries = totalSentences
   const diaryEntries = styleVector.totalSentences;
@@ -84,8 +84,8 @@ const AdminDashboard = () => {
   const { totalMoodEntries } = useMood();
 
   useEffect(() => {
-    // Check if current user is the owner
-    if (user?.id !== OWNER_ID) {
+      // Check if current user is the owner
+  if (userProfile?.id !== OWNER_ID) {
       navigate('/');
       return;
     }
